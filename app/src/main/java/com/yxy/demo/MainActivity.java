@@ -16,6 +16,9 @@ import com.yxy.demo.activity.DownloadActivity;
 import com.yxy.demo.service.DownloadService;
 import com.yxy.demo.utils.GenericUtils;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 @SuppressWarnings("FieldCanBeLocal")
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "###MainActivity";
@@ -32,13 +35,24 @@ public class MainActivity extends AppCompatActivity {
     TextView text;
 
     Intent serviceIntent;
+    Timer timer = new Timer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: 执行");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         serviceIntent = new Intent(this, DownloadService.class);
+        //定时改变text的值
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                MainActivity.this.runOnUiThread(() -> {
+                    text.setText(String.valueOf(System.currentTimeMillis()));
+                });
+            }
+        }, 0, 1000);
     }
 
     @OnClick({R.id.start_service, R.id.stop_service, R.id.go_download_activity, R.id.separate})
@@ -75,9 +89,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart: 执行");
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume: 执行");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause: 执行");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "onStop: 执行");
+        super.onStop();
+    }
+
+    @Override
+    protected void onRestart() {
+        Log.d(TAG, "onRestart: 执行");
+        super.onRestart();
+    }
+
+    @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy: 执行");
         super.onDestroy();
+        timer.cancel();
         if (GenericUtils.isServiceRunning(this, DownloadService.class)) {
+            //多次调用不会报错
             stopService(serviceIntent);
         }
     }

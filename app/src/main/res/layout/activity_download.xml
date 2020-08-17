@@ -46,9 +46,16 @@
     </LinearLayout>
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="==============================" />
+
+    <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center_horizontal"
         android:textSize="25sp"
-        android:text="==============================" />
+        android:text="666" />
 </LinearLayout>

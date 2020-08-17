@@ -2,19 +2,41 @@ package com.yxy.demo.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
+import android.os.*;
 import android.util.Log;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DownloadService extends Service {
     private final String TAG = "###DownloadService";
 
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if (msg.what == 0) {
+                Toast.makeText(getApplicationContext(), String.valueOf(System.currentTimeMillis()), Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    private Timer timer = new Timer();
     private DownloadBinder binder = new DownloadBinder();
 
+    //多次绑定不会多次调用此方法, 只会返回Binder的对象引用
     @Override
     public IBinder onBind(Intent intent) {
         //绑定服务的时候可以通过Intent传参数进来
         Log.d(TAG, "onBind: 执行");
+        //定时发送消息 只有[绑定服务]才会触发此定时任务
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.sendEmptyMessage(0);
+            }
+        }, 0, 1000);
         return binder;
     }
 
@@ -34,6 +56,8 @@ public class DownloadService extends Service {
 
     @Override
     public void onDestroy() {
+        //服务停止的时候才会取消计时任务
+        timer.cancel();
         Log.d(TAG, "onDestroy: 执行");
         super.onDestroy();
     }
@@ -53,6 +77,8 @@ public class DownloadService extends Service {
 
     public class DownloadBinder extends Binder {
         public void startDownload(String url) {
+            //很显然 Toast属于系统级别的应用
+            Toast.makeText(getApplicationContext(), url, Toast.LENGTH_SHORT).show();
             Log.d(TAG, "startDownload: " + url);
         }
     }

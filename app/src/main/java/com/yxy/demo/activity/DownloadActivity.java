@@ -53,6 +53,7 @@ public class DownloadActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: 执行");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
         ButterKnife.bind(this);
@@ -76,6 +77,7 @@ public class DownloadActivity extends AppCompatActivity {
                     if (isBind) {
                         unbindService(connection);
                         isBind = false;
+                        downloadBinder = null;
                         Toast.makeText(this, "解绑服务成功", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(this, "服务并未绑定", Toast.LENGTH_SHORT).show();
@@ -85,6 +87,7 @@ public class DownloadActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.start_download:
+                System.out.println("###"+downloadBinder);
                 if (downloadBinder != null && GenericUtils.isServiceRunning(this, DownloadService.class) && isBind) {
                     downloadBinder.startDownload("www.baidu.com");
                 } else {
@@ -98,9 +101,40 @@ public class DownloadActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart: 执行");
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume: 执行");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause: 执行");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "onStop: 执行");
+        super.onStop();
+    }
+
+    @Override
+    protected void onRestart() {
+        Log.d(TAG, "onRestart: 执行");
+        super.onRestart();
+    }
+
+    @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy: 执行");
         super.onDestroy();
-        //判断服务是否已经绑定
+        //判断服务是否已经绑定 多次解绑会报错
         if (isBind) {
             unbindService(connection);
             isBind = false;
