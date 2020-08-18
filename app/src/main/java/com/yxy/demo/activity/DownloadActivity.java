@@ -3,6 +3,7 @@ package com.yxy.demo.activity;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -16,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.yxy.demo.R;
+import com.yxy.demo.broadcast.DynamicReceiver;
 import com.yxy.demo.service.DownloadService;
 import com.yxy.demo.utils.GenericUtils;
 
@@ -51,6 +53,8 @@ public class DownloadActivity extends AppCompatActivity {
         }
     };
 
+    private DynamicReceiver dy;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: 执行");
@@ -58,6 +62,11 @@ public class DownloadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_download);
         ButterKnife.bind(this);
         intent = new Intent(this, DownloadService.class);
+
+        dy = new DynamicReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(DynamicReceiver.FLAG);
+        registerReceiver(dy, filter);
     }
 
     @OnClick({R.id.bind_service, R.id.unbind_service, R.id.start_download, R.id.separate})
@@ -89,6 +98,12 @@ public class DownloadActivity extends AppCompatActivity {
             case R.id.start_download:
                 if (downloadBinder != null && GenericUtils.isServiceRunning(this, DownloadService.class) && isBind) {
                     downloadBinder.startDownload("www.baidu.com");
+
+                    //这种方法也能启动动态注册的广播, 依然没有用到Action
+                    Intent broad = new Intent();
+                    broad.setComponent(new ComponentName(this, DynamicReceiver.class));
+                    sendBroadcast(broad);
+
                 } else {
                     Toast.makeText(this, "服务未开启", Toast.LENGTH_SHORT).show();
                 }
@@ -138,5 +153,7 @@ public class DownloadActivity extends AppCompatActivity {
             unbindService(connection);
             isBind = false;
         }
+        //解绑动态广播
+        unregisterReceiver(dy);
     }
 }
