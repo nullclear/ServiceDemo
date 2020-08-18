@@ -11,7 +11,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".activity.DownloadActivity"/>
+
+        <receiver
+            android:name=".broadcast.DynamicReceiver"
+            tools:ignore="ExportedReceiver" />
+        <receiver
+            android:name=".broadcast.StaticReceiver"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="com.yxy.demo.broadcast.StaticReceiver" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".activity.ProgressActivity" />
+        <activity android:name=".activity.DownloadActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

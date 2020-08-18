@@ -13,6 +13,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.yxy.demo.activity.DownloadActivity;
+import com.yxy.demo.activity.ProgressActivity;
+import com.yxy.demo.broadcast.StaticReceiver;
 import com.yxy.demo.service.DownloadService;
 import com.yxy.demo.utils.GenericUtils;
 
@@ -31,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     Button goDownloadActivity;
     @BindView(R.id.separate)
     Button separate;
+    @BindView(R.id.go_progress_bar)
+    Button goProgressBar;
+
     @BindView(R.id.text)
     TextView text;
 
@@ -52,10 +57,10 @@ public class MainActivity extends AppCompatActivity {
                     text.setText(String.valueOf(System.currentTimeMillis()));
                 });
             }
-        }, 0, 1000);
+        }, 0, 10000);
     }
 
-    @OnClick({R.id.start_service, R.id.stop_service, R.id.go_download_activity, R.id.separate})
+    @OnClick({R.id.start_service, R.id.stop_service, R.id.go_download_activity, R.id.separate, R.id.go_progress_bar})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.start_service:
@@ -79,11 +84,24 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.go_download_activity:
+                //静态广播 8.0版本以上不支持这种广播发送方式了
+                //Intent broad = new Intent("com.yxy.demo.broadcast.StaticReceiver");
+
+                //静态广播 使用的正确方法
+                Intent broad = new Intent();
+                broad.setComponent(new ComponentName(this, StaticReceiver.class));
+                sendBroadcast(broad);
+
+                //跳转到download页面
                 Intent intent = new Intent(this, DownloadActivity.class);
                 startActivity(intent);
                 break;
             case R.id.separate:
                 Log.d(TAG, "----------------------------");
+                break;
+            case R.id.go_progress_bar:
+                Intent intent2 = new Intent(this, ProgressActivity.class);
+                startActivity(intent2);
                 break;
         }
     }

@@ -92,7 +92,7 @@ public class DownloadService extends Service {
     public class DownloadBinder extends Binder {
         public void startDownload(String url) {
             //很显然 Toast属于系统级别的应用
-            Toast.makeText(getApplicationContext(), url, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), url, Toast.LENGTH_SHORT).show();
             Log.d(TAG, "startDownload: " + url);
         }
     }
