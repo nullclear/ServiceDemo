@@ -13,6 +13,7 @@ import java.util.TimerTask;
 public class DownloadService extends Service {
     private final String TAG = "###DownloadService";
 
+    //Service中也能使用handler
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -32,9 +33,22 @@ public class DownloadService extends Service {
         Log.d(TAG, "onBind: 执行");
         //定时发送消息 只有[绑定服务]才会触发此定时任务
         timer.schedule(new TimerTask() {
+            private Handler innerHandler = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(@NonNull Message msg) {
+                }
+            };
+
             @Override
             public void run() {
-                handler.sendEmptyMessage(0);
+                //方法一
+                //handler.sendEmptyMessage(0);
+                //方法二
+                handler.post(() -> {
+                    Toast.makeText(getApplicationContext(), String.valueOf(System.currentTimeMillis()), Toast.LENGTH_SHORT).show();
+                });
+                //方法四
+                //innerHandler.post(() -> Toast.makeText(getApplicationContext(), String.valueOf(System.currentTimeMillis()), Toast.LENGTH_SHORT).show());
             }
         }, 0, 1000);
         return binder;

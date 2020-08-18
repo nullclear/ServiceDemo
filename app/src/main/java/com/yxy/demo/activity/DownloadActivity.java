@@ -87,7 +87,6 @@ public class DownloadActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.start_download:
-                System.out.println("###"+downloadBinder);
                 if (downloadBinder != null && GenericUtils.isServiceRunning(this, DownloadService.class) && isBind) {
                     downloadBinder.startDownload("www.baidu.com");
                 } else {
@@ -135,7 +134,7 @@ public class DownloadActivity extends AppCompatActivity {
         Log.d(TAG, "onDestroy: 执行");
         super.onDestroy();
         //判断服务是否已经绑定 多次解绑会报错
-        if (isBind) {
+        if (isBind && GenericUtils.isServiceRunning(this, DownloadService.class)) {
             unbindService(connection);
             isBind = false;
         }
