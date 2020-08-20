@@ -54,8 +54,8 @@
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="100"
-        android:progress="12"
+        android:max="0"
+        android:progress="100"
         android:progressBackgroundTint="@color/black"
         android:progressTint="@color/sky"
         android:secondaryProgress="3" />
